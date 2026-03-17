@@ -1,8 +1,5 @@
-import Header from "./components/layout/Header";
+import ImpactoAgricolaPage from "./impactoAgricola/page";
+
 export default function Home() {
-  return (
-    <>
-    <Header />
-    </>
-  );
+  return <ImpactoAgricolaPage />;
 }
