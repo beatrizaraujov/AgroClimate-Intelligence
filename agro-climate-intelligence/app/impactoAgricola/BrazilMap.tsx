@@ -2,8 +2,11 @@ import { mapData } from "../mapData";
 
 export default function BrazilMaps() {
   return (
-    <section className="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden flex flex-col h-full">
+    // 1. Voltamos com um max-w-[850px] ou 900px para evitar o efeito "esticadão"
+    // 2. Mantivemos o h-[580px] para alinhar com a lateral
+    <section className="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden flex flex-col h-[580px] w-full max-w-[900px]">
       
+      {/* Header do Card */}
       <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center p-6 md:p-8 pb-4 md:pb-6">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-emerald-500" />
@@ -18,11 +21,11 @@ export default function BrazilMaps() {
         </div>
       </div>
 
-      
-      <div className="bg-[#2D7A73] w-full flex-grow flex items-center justify-center relative overflow-hidden group min-h-[400px]">
+      {/* Container do Mapa */}
+      <div className="bg-[#2D7A73] w-full relative overflow-hidden group flex-1 flex items-center justify-center">
         
-        
-        <div className="absolute top-6 left-6 z-10 max-w-[200px] md:max-w-[240px] bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl shadow-2xl transition-transform hover:scale-105">
+        {/* Balão de Alerta */}
+        <div className="hidden md:flex absolute top-6 left-6 z-10 max-w-[240px] bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl shadow-2xl transition-transform hover:scale-105">
           <div className="flex gap-3">
             <div className="bg-orange-500/20 p-2 rounded-lg h-fit">
               <span className="text-orange-500 text-xs">⚠️</span>
@@ -41,24 +44,25 @@ export default function BrazilMaps() {
           </div>
         </div>
 
-        
-        <div className="absolute bottom-6 right-6 z-10 flex flex-col gap-2">
-          <button className="w-8 h-8 md:w-10 md:h-10 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center text-slate-600 shadow-lg hover:bg-white transition-all active:scale-95 font-bold">+</button>
-          <button className="w-8 h-8 md:w-10 md:h-10 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center text-slate-600 shadow-lg hover:bg-white transition-all active:scale-95 font-bold">-</button>
+        {/* Controles de Zoom */}
+        <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-10 flex flex-col gap-2">
+          <button className="w-7 h-7 md:w-10 md:h-10 bg-white/90 backdrop-blur-sm rounded-lg md:rounded-xl flex items-center justify-center text-slate-600 shadow-lg hover:bg-white transition-all active:scale-95 font-bold">+</button>
+          <button className="w-7 h-7 md:w-10 md:h-10 bg-white/90 backdrop-blur-sm rounded-lg md:rounded-xl flex items-center justify-center text-slate-600 shadow-lg hover:bg-white transition-all active:scale-95 font-bold">-</button>
         </div>
 
-        
-        <div className="w-full h-full flex items-center justify-center p-10 md:p-14">
+        {/* SVG do Mapa - REDUZI O PADDING (p-2) para o Brasil ficar grande dentro do verde */}
+        <div className="w-full h-full flex items-center justify-center p-2 md:p-4">
           <svg 
             viewBox="0 0 1000 912" 
-            className="w-full h-full drop-shadow-[-20px_20px_40px_rgba(0,0,0,0.3)]"
+            preserveAspectRatio="xMidYMid meet"
+            className="w-[90%] h-[90%] drop-shadow-[-10px_10px_20px_rgba(0,0,0,0.3)] md:drop-shadow-[-20px_20px_40px_rgba(0,0,0,0.3)]"
           >
             {mapData.map((state) => (
               <path
                 key={state.id}
                 id={state.id}
                 d={state.pathD}
-                className="fill-teal-100/80 stroke-[#2D7A73] stroke-[1.2] hover:fill-emerald-400 cursor-pointer transition-all duration-300"
+                className="fill-teal-100/80 stroke-[#2D7A73] stroke-[1] md:stroke-[1.2] hover:fill-emerald-400 cursor-pointer transition-all duration-300"
               />
             ))}
           </svg>
