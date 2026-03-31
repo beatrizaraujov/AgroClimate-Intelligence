@@ -1,8 +1,7 @@
-'use client'; 
+'use client';
 
 import { useEffect, useState } from 'react';
 import { getLatestAlerts } from '../services/mapbiomas';
-
 
 interface MapBiomasAlert {
   alertCode: string;
@@ -23,7 +22,6 @@ export default function DiscoveryGrid() {
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
       } finally {
-        
         setTimeout(() => setLoading(false), 800);
       }
     }
@@ -38,7 +36,8 @@ export default function DiscoveryGrid() {
           .sort((a, b) => a.areaHa - b.areaHa) 
           .slice(0, 3) 
           .map((alert: MapBiomasAlert) => ({
-            name: alert.crossedStates[0] || "Preservado",
+            
+            name: alert.crossedStates?.[0] || "Zona Estável",
             score: Math.max(100 - Math.round(alert.areaHa / 5), 70), 
             color: "bg-emerald-500",
             text: "text-emerald-500"
@@ -57,7 +56,8 @@ export default function DiscoveryGrid() {
           .sort((a, b) => b.areaHa - a.areaHa) 
           .slice(0, 3)
           .map((alert: MapBiomasAlert) => ({
-            name: alert.crossedStates[0] || "Área Crítica",
+            
+            name: alert.crossedStates?.[0] || `Alerta ${alert.alertCode}`,
             score: Math.min(Math.round(alert.areaHa / 10), 60), 
             color: "bg-orange-500",
             text: "text-orange-500"
@@ -98,12 +98,12 @@ export default function DiscoveryGrid() {
         </div>
       </div>
 
-
+      
       <div className="bg-white rounded-[32px] p-8 shadow-sm border border-slate-50 flex flex-col">
         <div className="flex items-center gap-3 mb-10">
           <img src="/sobPressao.svg" alt="" className="w-6 h-6" />
           <h3 className="text-sm md:text-base font-bold text-slate-800 tracking-tight">
-            Estados sob Pressão
+            Monitoramento de Pressão
           </h3>
         </div>
 
@@ -125,7 +125,7 @@ export default function DiscoveryGrid() {
         </div>
       </div>
 
-    
+      
       <div className="bg-white/50 rounded-[32px] p-8 border border-dashed border-slate-200 flex flex-col">
         <h3 className="text-base font-bold text-slate-800 mb-2">Metodologia do Score</h3>
         <p className="text-xs text-slate-400 leading-relaxed mb-10">
@@ -146,7 +146,6 @@ export default function DiscoveryGrid() {
     </section>
   );
 }
-
 
 function MethodItem({ icon, title, desc }: { icon: string, title: string, desc: string }) {
   return (
