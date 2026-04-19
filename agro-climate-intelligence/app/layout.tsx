@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 
+
+import Header from "../app/components/layout/Header";
+
 const geist = Geist({
   subsets: ["latin"],
   variable: "--font-geist",
@@ -19,9 +22,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body className={`${geist.variable} antialiased`}>
-        {/* O Header foi removido daqui para ser controlado individualmente pelas páginas */}
-        {children}
+      <body className={`${geist.variable} antialiased bg-slate-50`}>
+        
+        <Header />
+
+       
+        <main>
+          {children}
+        </main>
       </body>
     </html>
   );
