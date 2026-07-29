@@ -1,60 +1,56 @@
 import { api } from './api';
 
-const ALERTS_QUERY = `
-  query {
-    alerts(limit: 500) {
-      collection {
-        id
-        alertCode
-        areaHa
-        crossedStates
-        publishedAt
-      }
-    }
-  }
-`;
+let cache: { data: Array<{ id: string; alertCode: string; areaHa: number; crossedStates: string[]; publishedAt: string }>; timestamp: number } | null = null;
+const CACHE_TTL = 5 * 60 * 1000;
 
 export const getLatestAlerts = async () => {
-  try {
-    console.log("[Service] Iniciando busca de alertas...");
+  if (cache && Date.now() - cache.timestamp < CACHE_TTL) {
+    return cache.data;
+  }
 
-    const response = await api.post('', { query: ALERTS_QUERY });
-    
+  try {
+    const response = await api.get('');
+
     if (response.data?.errors) {
-      console.error("[Service] Erros retornados pelo GraphQL:", response.data.errors);
+      if (response.data.errors[0]?.extensions?.code === 'TOKEN_EXPIRED') {
+        const alerts = getFallbackAlerts();
+        return alerts;
+      }
       throw new Error(response.data.errors[0].message);
     }
 
-   
+    if (response.status === 401) {
+      const alerts = getFallbackAlerts();
+      return alerts;
+    }
+
     const alerts = response.data?.data?.alerts?.collection;
 
     if (!alerts) {
-      console.warn("[Service] A API retornou sucesso, mas a coleção de alertas está vazia ou indefinida.");
       return [];
     }
 
-    console.log(`[Service] Sucesso! ${alerts.length} alertas recebidos.`);
-
-
-    return alerts.map((item: any) => ({
-      id: item.id || Math.random().toString(), 
-      alertCode: item.alertCode ?? "N/A",
+    const mapped = alerts.map((item: { id?: string; alertCode?: string; areaHa?: number; crossedStates?: string[]; publishedAt?: string }) => ({
+      id: item.id || Math.random().toString(),
+      alertCode: item.alertCode ?? 'N/A',
       areaHa: Number(item.areaHa) || 0,
       crossedStates: Array.isArray(item.crossedStates) ? item.crossedStates : [],
       publishedAt: item.publishedAt ?? new Date().toISOString(),
     }));
 
-  } catch (error: any) {
-  
-    if (error.response) {
-      console.error("[Service] Erro de Servidor (Status):", error.response.status);
-    } else if (error.request) {
-      console.error("[Service] Erro de Rede: Nenhuma resposta recebida.");
-    } else {
-      console.error("[Service] Erro na requisição:", error.message);
+    cache = { data: mapped, timestamp: Date.now() };
+    return mapped;
+
+  } catch (error: unknown) {
+    const axiosError = error as { response?: { status: number } };
+    if (axiosError?.response?.status === 401 || axiosError?.response?.status === 403) {
+      return getFallbackAlerts();
     }
-    
-   
-    return []; 
+    return [];
   }
 };
+
+function getFallbackAlerts() {
+  if (cache) return cache.data;
+  return [];
+}

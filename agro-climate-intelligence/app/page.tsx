@@ -1,5 +1,5 @@
-import ImpactoAgricolaPage from "./impactoAgricola/page";
+import { permanentRedirect } from "next/navigation";
 
 export default function Home() {
-  return <ImpactoAgricolaPage />;
+  permanentRedirect("/impactoAgricola");
 }

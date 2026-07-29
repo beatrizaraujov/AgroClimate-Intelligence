@@ -1,4 +1,4 @@
-export default function Header() {
+export default function DashboardTitle() {
   return (
     <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 sm:gap-0">
       <div className="w-full sm:w-auto">
@@ -9,9 +9,6 @@ export default function Header() {
           Dados consolidados do mercado agrícola brasileiro e impacto ambiental.
         </p>
       </div>
-      
-      
-    
     </header>
   );
 }
